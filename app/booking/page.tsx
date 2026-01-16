@@ -3,6 +3,7 @@
 import BackgroundSetter from "@/app/ui/background-setter";
 import { AdvancedMarker, APIProvider, Map } from "@vis.gl/react-google-maps";
 import { useEffect, useState } from "react";
+import AutocompleteInput from "./components/AutocompletInput";
 
 export default function BookingPage() {
   const [userlocation, setUserlocation] = useState({
@@ -26,7 +27,10 @@ export default function BookingPage() {
   }, []);
 
   return (
-    <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}>
+    <APIProvider
+      apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}
+      libraries={["places"]}
+    >
       <main className="flex min-h-screen flex-col p-6">
         <BackgroundSetter src="/main-background.png" />
 
@@ -39,6 +43,12 @@ export default function BookingPage() {
                   <label className="mb-1 block text-sm font-medium text-gray-700">
                     From
                   </label>
+                  <AutocompleteInput
+                    placeholder="Pickup"
+                    onPlaceSelect={(place: google.maps.places.PlaceResult) => {
+                      console.log(place);
+                    }}
+                  />
                   <input
                     className="w-full rounded border px-3 py-2"
                     placeholder="Pickup location"
@@ -90,8 +100,8 @@ export default function BookingPage() {
             <Map
               mapId="76dd9a2c49a5651ce5a42c9d"
               style={{ width: "auto", height: "70vh" }}
-              center={userlocation}
-              zoom={userlocation.lat === 3.140853 ? 8 : 15}
+              defaultCenter={userlocation}
+              defaultZoom={userlocation.lat === 3.140853 ? 8 : 15}
               gestureHandling="greedy"
             >
               <AdvancedMarker position={userlocation} />
