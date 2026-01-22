@@ -1,9 +1,15 @@
 import { useMapsLibrary } from "@vis.gl/react-google-maps";
 import { useEffect, useRef } from "react";
 
+type Location = {
+  address: string;
+  lat: number;
+  lng: number;
+};
+
 type Props = {
   placeholder: string;
-  onPlaceSelect: (place: google.maps.places.PlaceResult) => void;
+  onPlaceSelect: (loc: Location) => void;
 };
 
 function AutocompleteInput({ placeholder, onPlaceSelect }: Props) {
@@ -14,14 +20,18 @@ function AutocompleteInput({ placeholder, onPlaceSelect }: Props) {
     if (!places || !inputRef.current) return;
 
     const autocomplete = new places.Autocomplete(inputRef.current, {
-      fields: ["formatted_address", "geometry", "name"],
+      fields: ["formatted_address", "geometry"],
     });
 
     autocomplete.addListener("place_changed", () => {
       const place = autocomplete.getPlace();
-      if (place.geometry) {
-        onPlaceSelect(place);
-      }
+      if (!place.geometry) return;
+
+      onPlaceSelect({
+        address: place.formatted_address!,
+        lat: place.geometry.location!.lat(),
+        lng: place.geometry.location!.lng(),
+      });
     });
   }, [places]);
 
