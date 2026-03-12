@@ -22,12 +22,7 @@ export function BackgroundProvider({
         {src && (
           <>
             <div className="absolute inset-x-0 top-0 h-screen -z-10 pointer-events-none">
-              <Image
-                src={src}
-                alt="Background"
-                fill
-                className="hidden md:block object-cover"
-              />
+              <Image src={src} alt="Background" fill className="object-cover" />
             </div>
             <div className="absolute inset-0 top-0 h-screen -z-10 bg-black/60" />
           </>

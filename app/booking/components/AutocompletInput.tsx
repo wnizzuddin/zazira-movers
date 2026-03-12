@@ -1,3 +1,4 @@
+import { Input } from "@/components/ui/input";
 import { useMapsLibrary } from "@vis.gl/react-google-maps";
 import { useEffect, useRef } from "react";
 
@@ -36,11 +37,16 @@ function AutocompleteInput({ placeholder, onPlaceSelect }: Props) {
   }, [places]);
 
   return (
-    <input
+    <Input
       ref={inputRef}
       className="w-full rounded border px-3 py-2"
       placeholder={placeholder}
     />
+    // <input
+    //   ref={inputRef}
+    //   className="w-full rounded border px-3 py-2"
+    //   placeholder={placeholder}
+    // />
   );
 }
 
