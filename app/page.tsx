@@ -1,85 +1,80 @@
-import AcmeLogo from "@/app/ui/acme-logo";
-import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import styles from "@/app/ui/home.module.css";
-import Image from "next/image";
 import BackgroundSetter from "@/app/ui/background-setter";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Zazira Movers",
+  title: "Zazira Movers - Need a Moving Truck Today?",
 };
 
 export default function Page() {
   return (
-    <main className="flex min-h-screen flex-col p-6">
+    <main className="flex max-h-[90vh] flex-col">
       <BackgroundSetter src="/main-background.png" />
 
-      <div className="mt-4 flex grow flex-col gap-4 md:flex-row px-20">
-        <div className="flex flex-col justify-center gap-6 rounded-lg bg-gray-50 px-6 py-10 md:w-2/5 md:px-20">
-          <div className={styles.shape} />
-          <p className={`text-xl text-gray-800 md:text-3xl md:leading-normal`}>
-            <strong>Welcome to Acme.</strong> This is the example for the{" "}
-            <a href="https://nextjs.org/learn/" className="text-blue-500">
-              Next.js Learn Course
-            </a>
-            , brought to you by Vercel.
+      <div className="relative max-h-[90vh] flex justify-start pt-20 px-6 pl-[300px]">
+        {/* Dark overlay for better text readability */}
+        {/* <div className="absolute inset-0 bg-black/40 z-0"></div> */}
+
+        <div className="relative z-10 max-w-2xl">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+            Need a Moving Truck Today? We’re Ready 24/7
+          </h1>
+
+          <div className="mb-6">
+            <span className="inline-block bg-yellow-400 text-black font-bold px-4 py-2 rounded text-sm md:text-base">
+              MALAYSIA’S #1 MOVING EXPERT
+            </span>
+          </div>
+
+          <p className="text-base md:text-lg text-gray-200 mb-8 leading-relaxed max-w-xl">
+            Expert movers in Malaysia for home, office, and industrial moves
+            with a variety of truck sizes and same-day service options. Our team
+            is on standby 24 hours a day and ready to come directly to your
+            location.
           </p>
-          <Link
-            href="/login"
-            className="flex items-center gap-5 self-start rounded-lg bg-blue-500 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-400 md:text-base"
-          >
-            <span>Log in</span> <ArrowRightIcon className="w-5 md:w-6" />
-          </Link>
+
+          <div className="mb-8">
+            <p className="text-yellow-400 font-semibold text-sm md:text-base">
+              Fast Response • 24/7
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-4 mb-12">
+            <Link
+              href="/booking"
+              className="inline-flex items-center justify-center gap-2 bg-yellow-400 hover:bg-yellow-500 text-black font-bold px-6 py-3 rounded-lg transition-all duration-300 w-full sm:w-auto"
+            >
+              Get a Quote Now
+              <span>⟶</span>
+            </Link>
+            <Link
+              href="/services"
+              className="inline-flex items-center justify-center gap-2 border-2 border-yellow-400 hover:bg-yellow-400/10 text-yellow-400 font-bold px-6 py-3 rounded-lg transition-all duration-300 w-full sm:w-auto"
+            >
+              Our Services
+              <span>⟶</span>
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 gap-8 pt-8 border-t border-white/20">
+            <div>
+              <p className="text-4xl md:text-5xl font-bold text-yellow-400 mb-2">
+                35,000+
+              </p>
+              <p className="text-white font-semibold text-sm md:text-base uppercase tracking-wide">
+                Successful Moves
+              </p>
+            </div>
+            <div>
+              <p className="text-4xl md:text-5xl font-bold text-yellow-400 mb-2">
+                99%
+              </p>
+              <p className="text-white font-semibold text-sm md:text-base uppercase tracking-wide">
+                Customer Satisfaction
+              </p>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center justify-center p-6 md:w-3/5 md:px-28 md:py-12">
-          <Image
-            src="/hero-desktop.png"
-            width={1000}
-            height={760}
-            className="hidden md:block"
-            alt="Screenshots of the dashboard project showing desktop version"
-          />
-          <Image
-            src="/hero-mobile.png"
-            width={560}
-            height={620}
-            className="block md:hidden"
-            alt="Screenshot of the dashboard project showing mobile version"
-          />
-        </div>
-      </div>
-      <div className="flex items-center justify-center p-6 md:w-3/5 md:px-28 md:py-12">
-        <Image
-          src="/hero-desktop.png"
-          width={1000}
-          height={760}
-          className="hidden md:block"
-          alt="Screenshots of the dashboard project showing desktop version"
-        />
-        <Image
-          src="/hero-mobile.png"
-          width={560}
-          height={620}
-          className="block md:hidden"
-          alt="Screenshot of the dashboard project showing mobile version"
-        />
-      </div>
-      <div className="flex items-center justify-center p-6 md:w-3/5 md:px-28 md:py-12">
-        <Image
-          src="/hero-desktop.png"
-          width={1000}
-          height={760}
-          className="hidden md:block"
-          alt="Screenshots of the dashboard project showing desktop version"
-        />
-        <Image
-          src="/hero-mobile.png"
-          width={560}
-          height={620}
-          className="block md:hidden"
-          alt="Screenshot of the dashboard project showing mobile version"
-        />
       </div>
     </main>
   );

@@ -38,7 +38,6 @@ const FileUploader = () => {
               const file = new File([json], fileName, {
                 type: "application/json",
               });
-              console.log(file);
               try {
                 await uploadFileToStorage(
                   "package_price",

@@ -2,7 +2,7 @@
 
 import BackgroundSetter from "@/app/ui/background-setter";
 import { APIProvider, Map, Marker, useMap } from "@vis.gl/react-google-maps";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import AutocompleteInput from "./components/AutocompletInput";
 import MapDirections from "./components/MapDirections";
 import { getPackagePricingData } from "@/app/lib/supabase/storage";
@@ -20,7 +20,15 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { ArrowRightIcon, CalendarIcon } from "lucide-react";
+import {
+  ArrowRightIcon,
+  CalendarIcon,
+  MapPinIcon,
+  TruckIcon,
+  PackageIcon,
+  CheckCircleIcon,
+  AlertCircleIcon,
+} from "lucide-react";
 import { format } from "date-fns";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -48,12 +56,8 @@ type Location = {
   lng: number;
 };
 
-export default function BookingPage() {
+function BookingPageContent() {
   const searchParams = useSearchParams();
-  // const [userlocation, setUserlocation] = useState({
-  //   lat: 3.140853,
-  //   lng: 101.693207,
-  // });
   const [pickup, setPickup] = useState<any>();
   const [drop, setDrop] = useState<any>();
   const [mapDistance, setMapDistance] = useState<any>("");
@@ -65,18 +69,6 @@ export default function BookingPage() {
   const isMounted = useRef(false);
 
   useEffect(() => {
-    // let nav = navigator.geolocation;
-    // if (nav) {
-    //   navigator.geolocation.getCurrentPosition(
-    //     (position: GeolocationPosition) => {
-    //       const pos = {
-    //         lat: position.coords.latitude,
-    //         lng: position.coords.longitude,
-    //       };
-    //       setUserlocation({ lat: pos.lat, lng: pos.lng });
-    //     },
-    //   );
-    // }
     isMounted.current = true;
     return () => {
       isMounted.current = false;
@@ -158,208 +150,296 @@ export default function BookingPage() {
     }
   };
 
+  const isFormComplete =
+    pickup && drop && selectedPackage && selectedLorry && finalPrice;
+
   return (
     <APIProvider
       apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}
       libraries={["places", "routes"]}
     >
-      <main className="flex max-h-screen flex-col p-6">
+      <main className="flex  flex-col p-4">
         <BackgroundSetter src="/main-background.png" />
 
-        {/* <div className="grid grid-cols-1">
-          <h1 className="mx-auto max-w-3xl text-5xl font-semibold text-white">
-            Booking
-          </h1>
-        </div> */}
-        <div className="grid grid-cols-1 md:grid-cols-2 p-5 gap-5 h-[80vh]">
-          <div className="mx-auto w-full">
-            <div className="w-full rounded-lg bg-white p-6 shadow w-[45vw]">
-              <form className="grid gap-4" onSubmit={() => {}}>
-                <div className="grid grid-cols-1 gap-4">
-                  {/* <div className={allPricing ? "hidden" : ""}>
-                    <FileUploader />
-                  </div> */}
-                  <div>
-                    <label className="mb-1 block text-sm font-medium text-gray-700">
-                      From
-                    </label>
-                    <AutocompleteInput
-                      placeholder="Pickup Location"
-                      onPlaceSelect={(place: Location) => {
-                        setPickup(place);
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <label className="mb-1 block text-sm font-medium text-gray-700">
-                      To
-                    </label>
-                    <AutocompleteInput
-                      placeholder="Dropoff Location"
-                      onPlaceSelect={(place: Location) => {
-                        setDrop(place);
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <label>Selected package:</label>
-                    <Select
-                      value={selectedPackage || searchParams.get("pkg") || ""}
-                      onValueChange={(value) => {
-                        setSelectedPackage(value);
-                      }}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Choose preferred package" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="BRONZE">BRONZE</SelectItem>
-                        <SelectItem value="SILVER">SILVER</SelectItem>
-                        <SelectItem value="GOLD">GOLD</SelectItem>
-                        <SelectItem value="GOLD+++">GOLD+++</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <label>Selected lorry:</label>
-                    <Select
-                      value={selectedLorry}
-                      onValueChange={(value) => {
-                        setSelectedLorry(value);
-                      }}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Choose preferred lorry" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="1tan">1 tonne</SelectItem>
-                        <SelectItem value="3tan">3 tonne</SelectItem>
-                        <SelectItem value="5tan">5 tonne</SelectItem>
-                        <SelectItem value="7tan">7 tonne</SelectItem>
-                        <SelectItem value="10tan">10 tonne</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  {/* <div>
-                    <label>Selected date:</label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant={"outline"}
-                          data-empty={selectedDate}
-                          className="data-[empty=true]:text-muted-foreground w-full justify-between text-left font-normal"
-                        >
-                          {selectedDate ? (
-                            format(selectedDate, "PPP")
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                          <CalendarIcon data-icon="inline-end" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={selectedDate}
-                          onSelect={setSelectedDate}
-                          defaultMonth={selectedDate}
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </div> */}
-                </div>
-                <Separator />
-                <div className={`${!mapDistance && "hidden"}`}>
-                  <Item variant="outline">
-                    <ItemContent>
-                      <ItemTitle>Total Distance</ItemTitle>
-                      <ItemDescription>
-                        <span>
-                          {mapDistance !== ""
-                            ? mapDistance
-                            : "Select pickup and drop location."}
-                        </span>
-                      </ItemDescription>
-                    </ItemContent>
-                  </Item>
-                </div>
-                <div className={`${!finalPrice && "hidden"}`}>
-                  <Item variant="outline">
-                    <ItemContent>
-                      <ItemTitle>Package Description</ItemTitle>
-                      <ItemDescription>
-                        <span>
-                          <b>{selectedPackage}</b> package{" "}
-                          <b>{lorryTypes[selectedLorry]}</b> lorry
-                        </span>
-                      </ItemDescription>
-                    </ItemContent>
-                  </Item>
-                  <Item variant="outline">
-                    <ItemContent>
-                      <ItemTitle>Basic Amount:</ItemTitle>
-                      <ItemDescription>
-                        <b>RM {finalPrice ?? ""}</b>
-                      </ItemDescription>
-                    </ItemContent>
-                  </Item>
-                </div>
-                <Button
-                  asChild
-                  variant="outline"
-                  className="mt-2 bg-yellow-500 text-black hover:bg-yellow-300"
+        {/* Main Content */}
+        <div className="relative z-10 flex-1 px-4 pb-4 mt-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
+            <div className="flex flex-col">
+              <div className="bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col h-full">
+                {/* Form Header */}
+                {/* <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6 text-white">
+                  <h2 className="text-2xl font-bold">Booking Details</h2>
+                  <p className="text-blue-100 mt-1 text-sm">
+                    Fill in your moving details
+                  </p>
+                </div> */}
+
+                {/* Form Content */}
+                <form
+                  onSubmit={(event) => event.preventDefault()}
+                  className="flex-1 px-6 py-5 space-y-5 overflow-y-auto"
                 >
-                  <Link href="/booking/review">
-                    <ArrowRightIcon className={cn("size-4")} /> Proceed
-                  </Link>
-                </Button>
-              </form>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-1.5 mb-3">
+                      <MapPinIcon className="w-5 h-5 text-blue-600" />
+                      <h3 className="font-semibold text-gray-800">
+                        Pickup & Dropoff
+                      </h3>
+                    </div>
+
+                    <div className="space-y-2">
+                      <div>
+                        <label className="mb-1 block text-sm font-semibold text-gray-700">
+                          From
+                        </label>
+                        <div className="relative">
+                          <AutocompleteInput
+                            placeholder="Enter pickup location"
+                            onPlaceSelect={(place: Location) => {
+                              setPickup(place);
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="mb-1 block text-sm font-semibold text-gray-700">
+                          To
+                        </label>
+                        <div className="relative">
+                          <AutocompleteInput
+                            placeholder="Enter dropoff location"
+                            onPlaceSelect={(place: Location) => {
+                              setDrop(place);
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Separator className="bg-gray-200" />
+
+                  {/* Package & Lorry Section */}
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-1.5 mb-3">
+                      <PackageIcon className="w-5 h-5 text-purple-600" />
+                      <h3 className="font-semibold text-gray-800">
+                        Service & Vehicle
+                      </h3>
+                    </div>
+
+                    <div className="space-y-2">
+                      <div>
+                        <label className="mb-1 block text-sm font-semibold text-gray-700">
+                          Service Package
+                        </label>
+                        <Select
+                          value={
+                            selectedPackage || searchParams.get("pkg") || ""
+                          }
+                          onValueChange={(value) => {
+                            setSelectedPackage(value);
+                          }}
+                        >
+                          <SelectTrigger className="w-full h-10 border-gray-300 hover:border-blue-400 transition-colors">
+                            <SelectValue placeholder="Choose your package" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="BRONZE">BRONZE</SelectItem>
+                            <SelectItem value="SILVER">SILVER</SelectItem>
+                            <SelectItem value="GOLD">GOLD</SelectItem>
+                            <SelectItem value="GOLD+++">GOLD+++</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <label className="mb-1 block text-sm font-semibold text-gray-700">
+                          Vehicle Size
+                        </label>
+                        <Select
+                          value={selectedLorry}
+                          onValueChange={(value) => {
+                            setSelectedLorry(value);
+                          }}
+                        >
+                          <SelectTrigger className="w-full h-10 border-gray-300 hover:border-blue-400 transition-colors">
+                            <SelectValue placeholder="Choose vehicle size" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="1tan">1 Tonne</SelectItem>
+                            <SelectItem value="3tan">3 Tonne</SelectItem>
+                            <SelectItem value="5tan">5 Tonne</SelectItem>
+                            <SelectItem value="7tan">7 Tonne</SelectItem>
+                            <SelectItem value="10tan">10 Tonne</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Separator className="bg-gray-200" />
+
+                  {/* Summary Section */}
+                  {mapDistance && (
+                    <div className="space-y-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-gray-700 font-medium">
+                          Distance:
+                        </span>
+                        <span className="font-bold text-blue-600">
+                          {mapDistance}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {finalPrice && (
+                    <div className="space-y-2 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border-2 border-green-300">
+                      <p className="text-xs text-gray-600 font-medium text-center">
+                        📋 Package Details
+                      </p>
+                      <div className="flex justify-between items-center text-sm mb-2">
+                        <span className="text-gray-700">
+                          <span className="font-semibold">
+                            {selectedPackage}
+                          </span>{" "}
+                          Package
+                        </span>
+                        <span className="text-gray-700">
+                          <span className="font-semibold">
+                            {lorryTypes[selectedLorry]}
+                          </span>
+                        </span>
+                      </div>
+                      <Separator className="bg-green-200" />
+                      <div className="flex justify-between items-center pt-2">
+                        <span className="text-gray-800 font-semibold">
+                          Estimated Price:
+                        </span>
+                        <span className="text-2xl font-bold text-green-600">
+                          RM {finalPrice}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {!isFormComplete && (
+                    <div className="flex items-start gap-2 p-2.5 bg-amber-50 rounded-lg border border-amber-200">
+                      <AlertCircleIcon className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                      <p className="text-sm text-amber-800">
+                        <span className="font-semibold">
+                          Complete all fields
+                        </span>{" "}
+                        to proceed with your booking
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Action Button */}
+                  <Button
+                    type="button"
+                    className={cn(
+                      "w-full h-11 text-sm font-semibold rounded-lg transition-all duration-300 flex items-center justify-center gap-1.5",
+                      isFormComplete
+                        ? "bg-gradient-to-r from-yellow-400 to-yellow-500 text-black hover:from-yellow-500 hover:to-yellow-600 shadow-lg hover:shadow-xl"
+                        : "bg-gray-300 text-gray-500 cursor-not-allowed",
+                    )}
+                    onClick={() => {
+                      if (isFormComplete) {
+                        const bookingData = {
+                          pickup: pickup?.address || "",
+                          drop: drop?.address || "",
+                          distance: mapDistance,
+                          selectedPackage,
+                          selectedLorry,
+                          finalPrice,
+                        };
+                        sessionStorage.setItem(
+                          "bookingData",
+                          JSON.stringify(bookingData),
+                        );
+                        window.location.href = "/booking/review";
+                      }
+                    }}
+                    disabled={!isFormComplete}
+                  >
+                    Review & Proceed
+                    <ArrowRightIcon className="w-5 h-5" />
+                  </Button>
+                </form>
+              </div>
             </div>
-          </div>
-          <div className="rounded-xl overflow-hidden h-[80vh]">
-            <Map
-              mapId="76dd9a2c49a5651ce5a42c9d"
-              style={{ width: "auto", height: "80vh" }}
-              defaultCenter={{
-                lat: 3.826132979861204,
-                lng: 102.08943882724553,
-              }}
-              defaultZoom={8}
-              gestureHandling="greedy"
-            >
-              {pickup && (
-                <Marker
-                  position={{ lat: pickup.lat, lng: pickup.lng }}
-                  draggable
-                  onDragEnd={(e) => {
-                    setPickup({ lat: e.latLng!.lat(), lng: e.latLng!.lng() });
-                  }}
-                />
-              )}
 
-              {drop && (
-                <Marker
-                  position={{ lat: drop.lat, lng: drop.lng }}
-                  draggable
-                  onDragEnd={(e) => {
-                    setDrop({ lat: e.latLng!.lat(), lng: e.latLng!.lng() });
-                  }}
-                />
-              )}
-
-              <MapDirections
-                from={pickup}
-                to={drop}
-                onRoute={(d: any, t) => {
-                  setMapDistance(d);
-                  // getPriceBasedOnKM(d);
+            {/* Map Section */}
+            <div className="rounded-2xl overflow-hidden shadow-2xl h-72 lg:h-full">
+              <Map
+                mapId="76dd9a2c49a5651ce5a42c9d"
+                style={{ width: "100%", height: "100%" }}
+                defaultCenter={{
+                  lat: 3.826132979861204,
+                  lng: 102.08943882724553,
                 }}
-              />
-              <PickupChange from={pickup} />
-            </Map>
+                defaultZoom={8}
+                gestureHandling="greedy"
+              >
+                {pickup && (
+                  <Marker
+                    position={{ lat: pickup.lat, lng: pickup.lng }}
+                    draggable
+                    onDragEnd={(e) => {
+                      setPickup({
+                        lat: e.latLng!.lat(),
+                        lng: e.latLng!.lng(),
+                      });
+                    }}
+                  />
+                )}
+
+                {drop && (
+                  <Marker
+                    position={{ lat: drop.lat, lng: drop.lng }}
+                    draggable
+                    onDragEnd={(e) => {
+                      setDrop({
+                        lat: e.latLng!.lat(),
+                        lng: e.latLng!.lng(),
+                      });
+                    }}
+                  />
+                )}
+
+                <MapDirections
+                  from={pickup}
+                  to={drop}
+                  onRoute={(d: any, t) => {
+                    setMapDistance(d);
+                  }}
+                />
+                <PickupChange from={pickup} />
+              </Map>
+            </div>
           </div>
         </div>
       </main>
     </APIProvider>
+  );
+}
+
+export default function BookingPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="flex min-h-screen items-center justify-center bg-slate-900 pt-20 text-slate-300">
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-blue-600 border-t-blue-300 rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-lg font-medium">Loading booking form...</p>
+          </div>
+        </main>
+      }
+    >
+      <BookingPageContent />
+    </Suspense>
   );
 }

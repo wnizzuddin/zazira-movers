@@ -2,7 +2,11 @@ import { GlobeAltIcon } from "@heroicons/react/24/outline";
 import { lusitana } from "@/app/ui/fonts";
 import Image from "next/image";
 
-export default function AcmeLogo(props: { scrolled: boolean }) {
+export default function ZaziraLogo({
+  scrolled = false,
+}: {
+  scrolled?: boolean;
+}) {
   return (
     <div
       className={`${lusitana.className} flex flex-row items-center leading-none text-white`}
@@ -11,7 +15,7 @@ export default function AcmeLogo(props: { scrolled: boolean }) {
       <p className="text-[44px]">Acme</p> */}
       <Image
         src={
-          props.scrolled
+          scrolled
             ? "/logo-zazira-movers-black.png"
             : "/logo-zazira-movers-white.png"
         }
