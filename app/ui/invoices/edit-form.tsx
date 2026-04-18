@@ -8,7 +8,8 @@ import {
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { Button } from "@/app/ui/button";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function EditInvoiceForm({
   invoice,
@@ -52,7 +53,7 @@ export default function EditInvoiceForm({
           </label>
           <div className="relative mt-2 rounded-md">
             <div className="relative">
-              <input
+              <Input
                 id="amount"
                 name="amount"
                 type="number"

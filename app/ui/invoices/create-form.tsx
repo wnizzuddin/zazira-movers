@@ -6,7 +6,8 @@ import {
   CurrencyDollarIcon,
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
-import { Button } from "@/app/ui/button";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function Form({ customers }: { customers: CustomerField[] }) {
   return (
@@ -44,7 +45,7 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
           </label>
           <div className="relative mt-2 rounded-md">
             <div className="relative">
-              <input
+              <Input
                 id="amount"
                 name="amount"
                 type="number"

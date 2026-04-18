@@ -5,7 +5,8 @@ import {
   ExclamationCircleIcon,
 } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
-import { Button } from './button';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 export default function LoginForm() {
   return (
@@ -23,7 +24,7 @@ export default function LoginForm() {
               Email
             </label>
             <div className="relative">
-              <input
+              <Input
                 className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
                 id="email"
                 type="email"
@@ -42,7 +43,7 @@ export default function LoginForm() {
               Password
             </label>
             <div className="relative">
-              <input
+              <Input
                 className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
                 id="password"
                 type="password"

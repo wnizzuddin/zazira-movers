@@ -3,6 +3,12 @@
 import { getPackagePricingData } from "@/app/lib/supabase/storage";
 import BackgroundSetter from "@/app/ui/background-setter";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -13,9 +19,11 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { APIProvider, Map, Marker, useMap } from "@vis.gl/react-google-maps";
+import { format } from "date-fns";
 import {
   AlertCircleIcon,
   ArrowRightIcon,
+  CalendarIcon,
   MapPinIcon,
   PackageIcon,
 } from "lucide-react";
@@ -38,6 +46,16 @@ type Location = {
   lng: number;
 };
 
+function formatTimeLabel(value24h: string) {
+  const [hStr, mStr] = value24h.split(":");
+  const h = Number(hStr);
+  const m = Number(mStr);
+  const period = h >= 12 ? "PM" : "AM";
+  const hour12 = h % 12 === 0 ? 12 : h % 12;
+  const min = String(m).padStart(2, "0");
+  return `${hour12}:${min} ${period}`;
+}
+
 function BookingPageContent() {
   const searchParams = useSearchParams();
   const [pickup, setPickup] = useState<any>();
@@ -46,7 +64,8 @@ function BookingPageContent() {
   const [finalPrice, setFinalPrice] = useState<any>("");
   const [selectedLorry, setSelectedLorry] = useState<string>("");
   const [selectedPackage, setSelectedPackage] = useState<string>("");
-  const [selectedDate, setSelectedDate] = useState<any>("");
+  const [pickupDate, setPickupDate] = useState<string>("");
+  const [pickupTime, setPickupTime] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const isMounted = useRef(false);
 
@@ -94,7 +113,7 @@ function BookingPageContent() {
     try {
       const data: any = await getPackagePricingData(
         "package_price",
-        `${currentPkg}/price.json`,
+        `${currentPkg}/price.json`
       );
       if (data) {
         const jsonPackage = await data.text();
@@ -109,7 +128,7 @@ function BookingPageContent() {
   const getPriceBasedOnKM = async (
     distanceKM: string,
     pkg: any,
-    lry: string,
+    lry: string
   ) => {
     setLoading(true);
     const allPricing = await fetchPricing(pkg);
@@ -131,10 +150,23 @@ function BookingPageContent() {
       setLoading(false);
     }
   };
-  console.log(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY);
 
   const isFormComplete =
-    pickup && drop && selectedPackage && selectedLorry && finalPrice;
+    pickup &&
+    drop &&
+    selectedPackage &&
+    selectedLorry &&
+    finalPrice &&
+    pickupDate &&
+    pickupTime;
+
+  const pickupTimeOptions = Array.from({ length: 21 }, (_, i) => {
+    const totalMinutes = 10 * 60 + i * 30; // 10:00 -> 20:00 (inclusive)
+    const hh = String(Math.floor(totalMinutes / 60)).padStart(2, "0");
+    const mm = String(totalMinutes % 60).padStart(2, "0");
+    const value = `${hh}:${mm}`;
+    return { value, label: formatTimeLabel(value) };
+  });
 
   return (
     <APIProvider
@@ -164,7 +196,7 @@ function BookingPageContent() {
                 >
                   <div className="space-y-3">
                     <div className="flex items-center gap-1.5 mb-3">
-                      <MapPinIcon className="w-5 h-5 text-blue-600" />
+                      <MapPinIcon className="w-5 h-5 text-purple-600" />
                       <h3 className="font-semibold text-gray-800">
                         Pickup & Dropoff
                       </h3>
@@ -197,6 +229,75 @@ function BookingPageContent() {
                             }}
                           />
                         </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Separator className="bg-gray-200" />
+
+                  {/* Pickup Date/Time */}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <CalendarIcon className="w-5 h-5 text-purple-600" />
+                      <h3 className="font-semibold text-gray-800">
+                        Pickup Schedule
+                      </h3>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="mb-1 block text-sm font-semibold text-gray-700">
+                          Date
+                        </label>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className={cn(
+                                "h-10 w-full justify-start border-gray-300 px-3 text-left text-sm font-normal hover:border-blue-400",
+                                !pickupDate && "text-muted-foreground"
+                              )}
+                            >
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {pickupDate
+                                ? format(new Date(pickupDate), "PPP")
+                                : "Choose pickup date"}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={
+                                pickupDate ? new Date(pickupDate) : undefined
+                              }
+                              onSelect={(d) => {
+                                setPickupDate(d ? format(d, "yyyy-MM-dd") : "");
+                              }}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                      <div>
+                        <label className="mb-1 block text-sm font-semibold text-gray-700">
+                          Time
+                        </label>
+                        <Select
+                          value={pickupTime}
+                          onValueChange={(value) => setPickupTime(value)}
+                        >
+                          <SelectTrigger className="w-full h-10 border-gray-300 hover:border-blue-400 transition-colors">
+                            <SelectValue placeholder="Choose pickup time" />
+                          </SelectTrigger>
+                          <SelectContent className="">
+                            {pickupTimeOptions.map((t) => (
+                              <SelectItem key={t.value} value={t.value}>
+                                {t.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
                   </div>
@@ -327,7 +428,7 @@ function BookingPageContent() {
                       "w-full h-11 text-sm font-semibold rounded-lg transition-all duration-300 flex items-center justify-center gap-1.5",
                       isFormComplete
                         ? "bg-gradient-to-r from-yellow-400 to-yellow-500 text-black hover:from-yellow-500 hover:to-yellow-600 shadow-lg hover:shadow-xl"
-                        : "bg-gray-300 text-gray-500 cursor-not-allowed",
+                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
                     )}
                     onClick={() => {
                       if (isFormComplete) {
@@ -338,10 +439,12 @@ function BookingPageContent() {
                           selectedPackage,
                           selectedLorry,
                           finalPrice,
+                          pickupDate,
+                          pickupTime,
                         };
                         sessionStorage.setItem(
                           "bookingData",
-                          JSON.stringify(bookingData),
+                          JSON.stringify(bookingData)
                         );
                         window.location.href = "/booking/review";
                       }
