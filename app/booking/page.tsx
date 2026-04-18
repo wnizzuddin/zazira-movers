@@ -1,11 +1,8 @@
 "use client";
 
-import BackgroundSetter from "@/app/ui/background-setter";
-import { APIProvider, Map, Marker, useMap } from "@vis.gl/react-google-maps";
-import { Suspense, useEffect, useRef, useState } from "react";
-import AutocompleteInput from "./components/AutocompletInput";
-import MapDirections from "./components/MapDirections";
 import { getPackagePricingData } from "@/app/lib/supabase/storage";
+import BackgroundSetter from "@/app/ui/background-setter";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -13,34 +10,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  ArrowRightIcon,
-  CalendarIcon,
-  MapPinIcon,
-  TruckIcon,
-  PackageIcon,
-  CheckCircleIcon,
-  AlertCircleIcon,
-} from "lucide-react";
-import { format } from "date-fns";
 import { Separator } from "@/components/ui/separator";
-import {
-  Item,
-  ItemContent,
-  ItemDescription,
-  ItemTitle,
-} from "@/components/ui/item";
-import FileUploader from "@/components/utils/fileUploader";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { APIProvider, Map, Marker, useMap } from "@vis.gl/react-google-maps";
+import {
+  AlertCircleIcon,
+  ArrowRightIcon,
+  MapPinIcon,
+  PackageIcon,
+} from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useRef, useState } from "react";
+import AutocompleteInput from "./components/AutocompletInput";
+import MapDirections from "./components/MapDirections";
 
 const lorryTypes: Record<string, string> = {
   "1tan": "1 tonne",
@@ -149,6 +131,7 @@ function BookingPageContent() {
       setLoading(false);
     }
   };
+  console.log(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY);
 
   const isFormComplete =
     pickup && drop && selectedPackage && selectedLorry && finalPrice;

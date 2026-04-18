@@ -1,8 +1,6 @@
 "use client";
 
 import BackgroundSetter from "@/app/ui/background-setter";
-import { useRouter } from "next/navigation";
-import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,20 +11,14 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
-  Item,
-  ItemContent,
-  ItemDescription,
-  ItemTitle,
-} from "@/components/ui/item";
-import {
+  ArrowRightIcon,
   CheckCircleIcon,
   MapPinIcon,
-  TruckIcon,
   SparklesIcon,
-  ArrowLeftIcon,
-  ArrowRightIcon,
+  TruckIcon,
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
 
 type PackageFeatures = {
   [key: string]: string[];
@@ -96,7 +88,7 @@ interface BookingData {
   finalPrice?: string;
 }
 
-export default function ReviewPage() {
+function ReviewPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [bookingData, setBookingData] = useState<BookingData>({});
@@ -352,5 +344,25 @@ export default function ReviewPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function ReviewPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="flex max-h-screen flex-col p-6">
+          <BackgroundSetter src={"/main-background.png"} />
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+              <p className="mt-4 text-gray-600">Loading...</p>
+            </div>
+          </div>
+        </main>
+      }
+    >
+      <ReviewPageContent />
+    </Suspense>
   );
 }

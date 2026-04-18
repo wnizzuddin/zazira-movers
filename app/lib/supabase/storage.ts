@@ -1,4 +1,4 @@
-import { supabase } from "./client";
+import { createSupabaseClient } from "./client";
 
 /**
  * Download JSON file from Supabase storage
@@ -11,6 +11,7 @@ export async function downloadJsonFromStorage<T>(
   filePath: string,
 ): Promise<T> {
   try {
+    const supabase = createSupabaseClient();
     const { data, error } = await supabase.storage
       .from(bucketName)
       .download(filePath);
@@ -45,6 +46,7 @@ export async function listFilesInBucket(
   folderPath: string = "",
 ) {
   try {
+    const supabase = createSupabaseClient();
     const { data, error } = await supabase.storage
       .from(bucketName)
       .list(folderPath);
@@ -67,6 +69,7 @@ export async function listFilesInBucket(
  * @returns Public URL string
  */
 export function getPublicFileUrl(bucketName: string, filePath: string): string {
+  const supabase = createSupabaseClient();
   const { data } = supabase.storage.from(bucketName).getPublicUrl(filePath);
 
   return data.publicUrl;
@@ -83,6 +86,7 @@ export async function getPackagePricingData(
   filePath: string,
 ) {
   try {
+    const supabase = createSupabaseClient();
     const { data } = await supabase.storage.from(bucketName).download(filePath);
     return data;
   } catch (error) {
@@ -104,6 +108,7 @@ export async function uploadFileToStorage(
   file: File,
 ) {
   try {
+    const supabase = createSupabaseClient();
     const { data, error } = await supabase.storage
       .from(bucketName)
       .upload(filePath, file, {
@@ -135,6 +140,7 @@ export async function upsertFileToStorage(
   file: File,
 ) {
   try {
+    const supabase = createSupabaseClient();
     const { data, error } = await supabase.storage
       .from(bucketName)
       .upload(filePath, file, {
